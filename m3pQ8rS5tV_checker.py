@@ -28,7 +28,7 @@ def get_remote_filename():
 
 def send_discord_notification(new_filename):
     data = {
-        "content": f"🚨 **Nouvelle version détectée !** 🚨\n\nLe fichier a changé : **{new_filename}**\n)"
+        "content": f"🚨 **Update detected!** 🚨\n\nNew version: **{new_filename}**"
     }
     try:
         requests.post(WEBHOOK_URL, json=data)
@@ -37,12 +37,12 @@ def send_discord_notification(new_filename):
         print(f"[{time.strftime('%H:%M:%S')}] Erreur lors de l'envoi Discord : {e}")
 
 def main():
-    print(f"Démarrage de la surveillance pour {URL}...")
+    print(f"Starting monitor for {URL}...")
     last_known_version = None
     if os.path.exists(STATE_FILE):
         with open(STATE_FILE, "r") as f:
             last_known_version = f.read().strip()
-            print(f"Dernière version connue chargée : {last_known_version}")
+            print(f"Last known version loaded: {last_known_version}")
     
     # Mode GitHub Actions (une seule exécution) ou Local (boucle infinie)
     run_once = os.environ.get('GITHUB_ACTIONS') == 'true'

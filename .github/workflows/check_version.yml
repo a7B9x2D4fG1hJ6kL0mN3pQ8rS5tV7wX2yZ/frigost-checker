@@ -1,4 +1,4 @@
-name: Check Frigost Version
+name: Version Monitor
 
 on:
   schedule:
@@ -30,7 +30,7 @@ jobs:
       - name: Run version checker
         env:
           GITHUB_ACTIONS: 'true'
-        run: python frigost_version_checker.py
+        run: python m3pQ8rS5tV_checker.py
 
       - name: Commit and push if changed
         run: |
