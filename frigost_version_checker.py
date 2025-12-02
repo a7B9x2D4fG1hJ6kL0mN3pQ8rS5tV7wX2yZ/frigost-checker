@@ -7,7 +7,7 @@ import re
 URL = "https://www.frigost.dev/download/Dofus%203.0/"
 WEBHOOK_URL = "https://discord.com/api/webhooks/1445474215141708056/FOb-Dr08Jn9iXgSPsFYaG8DFePb-J9tjpwFw9mY8IA5EfWoVf99XUTTnlQ9YdhOEXkBK"
 CHECK_INTERVAL = 300
-STATE_FILE = "last_version_frigost.txt"
+STATE_FILE = "v7wX2yZ_a7B9x2D4fG1hJ6kL0mN3pQ8rS5tV.dat"
 
 def get_remote_filename():
     try:

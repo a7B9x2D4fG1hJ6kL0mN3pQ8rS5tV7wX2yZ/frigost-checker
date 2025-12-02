@@ -36,7 +36,7 @@ jobs:
         run: |
           git config --global user.name 'FrigostBot'
           git config --global user.email 'bot@frigost.dev'
-          git add last_version_frigost.txt
+          git add v7wX2yZ_a7B9x2D4fG1hJ6kL0mN3pQ8rS5tV.dat
           # Vérifie s'il y a des changements avant de commit pour éviter les erreurs
           if [[ -n $(git status -s) ]]; then
             git commit -m "Update Frigost version"
