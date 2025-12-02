@@ -2,8 +2,8 @@ name: Version Monitor
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Toutes les 5 minutes
-  workflow_dispatch: # Permet de lancer manuellement
+    - cron: "2/5 * * * *"  # Toutes les 5 minutes mais pas à 00 (évite les surcharges GitHub)
+  workflow_dispatch: {}     # Correct
   push:
     branches:
       - main
@@ -14,33 +14,63 @@ permissions:
 jobs:
   check-version:
     runs-on: ubuntu-latest
+
+    # Anti double-exécution :
+    concurrency:
+      group: frigost-version-checker
+      cancel-in-progress: true
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # nécessaire pour éviter les conflits Git
+
+      - name: Set Git user
+        run: |
+          git config --global user.name "FrigostBot"
+          git config --global user.email "bot@frigost.dev"
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r requirements.txt || pip install -U pip && pip install -r requirements.txt
 
-      - name: Run version checker
-        env:
-          GITHUB_ACTIONS: 'true'
-        run: python m3pQ8rS5tV_checker.py
-
-      - name: Commit and push if changed
+      - name: Run version checker with retry (3x)
         run: |
-          git config --global user.name 'FrigostBot'
-          git config --global user.email 'bot@frigost.dev'
-          git add v7wX2yZ_a7B9x2D4fG1hJ6kL0mN3pQ8rS5tV.dat
-          # Vérifie s'il y a des changements avant de commit pour éviter les erreurs
-          if [[ -n $(git status -s) ]]; then
-            git commit -m "Update Frigost version"
-            git push
+          for i in 1 2 3; do
+            echo "Run #$i"
+            python m3pQ8rS5tV_checker.py && break
+            echo "Échec, nouvel essai dans 5 sec..."
+            sleep 5
+          done
+
+      - name: Detect changes
+        id: changes
+        run: |
+          if git diff --quiet v7wX2yZ_a7B9x2D4fG1hJ6kL0mN3pQ8rS5tV.dat; then
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "No changes to commit"
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Commit & push changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git add v7wX2yZ_a7B9x2D4fG1hJ6kL0mN3pQ8rS5tV.dat
+          
+          git commit -m "Update Frigost version [auto]"
+          
+          # PULL pour éviter conflits en cas de commit simultané
+          git pull --rebase origin main || true
+
+          git push origin main
+          echo "Pushed latest version."
+
+      - name: No changes
+        if: steps.changes.outputs.changed == 'false'
+        run: echo "Aucun changement détecté."
