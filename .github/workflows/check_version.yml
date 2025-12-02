@@ -2,7 +2,7 @@ name: Version Monitor
 
 on:
   schedule:
-    - cron: '*/2 * * * *' # Toutes les 15 minutes
+    - cron: '*/5 * * * *' # Toutes les 5 minutes
   workflow_dispatch: # Permet de lancer manuellement
   push:
     branches:
