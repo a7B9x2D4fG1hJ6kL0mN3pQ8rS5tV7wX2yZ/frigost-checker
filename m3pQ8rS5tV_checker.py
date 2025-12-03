@@ -45,14 +45,14 @@ def main():
             last_known_version = current_filename
             with open(STATE_FILE, "w") as f:
                 f.write(current_filename)
-            send_discord_notification(f"✅ Monitoring started. Current version: **{current_filename}**")
+            send_discord_notification(f"✅ Current version: **{current_filename}**")
         elif current_filename != last_known_version:
             send_discord_notification(f"🚨 Update detected! 🚨\nOld version: **{last_known_version}**\nNew version: **{current_filename}**")
             last_known_version = current_filename
             with open(STATE_FILE, "w") as f:
                 f.write(current_filename)
         else:
-            send_discord_notification(f"✅ Monitoring active. No change detected. Current version: **{current_filename}**")
+            send_discord_notification(f"✅ Current version: **{current_filename}**")
             print(f"No change: {current_filename}")
 
 if __name__ == "__main__":
